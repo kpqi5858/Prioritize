@@ -1,0 +1,4 @@
+*.csproj.user
+Prioritize/bin/*
+Prioritize/obj/*
+.vs/*

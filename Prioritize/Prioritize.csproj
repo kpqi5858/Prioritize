@@ -62,7 +62,7 @@
     <Compile Include="Patch_FinalizeInit.cs" />
     <Compile Include="PDefOf.cs" />
     <Compile Include="PriorityDrawMode.cs" />
-    <Compile Include="PriorityGrid.cs" />
+    <Compile Include="PriorityMapData.cs" />
     <Compile Include="PriorityShowCondition.cs" />
     <Compile Include="PriorityShowConditions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

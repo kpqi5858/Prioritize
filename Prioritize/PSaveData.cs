@@ -10,10 +10,7 @@ namespace Prioritize
         public Dictionary<int, PriorityMapData> PriorityMapDataDict = new Dictionary<int, PriorityMapData>();
         public Dictionary<int, int> ThingPriority = new Dictionary<int, int>();
 
-        public PSaveData()
-        {
-            
-        }
+        public PSaveData() {  }
 
         public int GetOrCreateThingPriority(Thing t)
         {

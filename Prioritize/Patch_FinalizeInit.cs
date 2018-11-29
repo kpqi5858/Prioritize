@@ -13,7 +13,7 @@ namespace Prioritize
         {
             if (MainMod.save == null)
             {
-                //Log.Error("FinalizeInit called but no mod save loaded,");
+                Log.Message("FinalizeInit called but no mod save loaded, Probably new game start, or bug.");
                 return;
             }
             MainMod.save.ClearUnusedThingPriority();

@@ -30,6 +30,12 @@ namespace Prioritize
 
         public short GetPriorityAt(IntVec3 loc)
         {
+            ushort retval = priorityGrid[map.cellIndices.CellToIndex(loc)];
+            if (retval == 0)
+            {
+                Log.ErrorOnce("Priority grid " + loc.ToString() + " priority is -32767, Resetting to 0..", "PG32767Error".GetHashCode());
+                priorityGrid[map.cellIndices.CellToIndex(loc)] = 32768;
+            }
             return (short)(priorityGrid[map.cellIndices.CellToIndex(loc)] - 32768);
         }
         public void SetPriorityAt(IntVec3 loc, short pri)

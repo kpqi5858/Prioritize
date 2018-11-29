@@ -129,6 +129,7 @@ namespace Prioritize
             return null;
         }
 
+
         public override Danger MaxPathDanger(Pawn pawn)
         {
             return Danger.Deadly;

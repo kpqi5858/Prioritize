@@ -104,7 +104,7 @@ namespace Prioritize
             if (pawn.Faction != null && !pawn.Faction.IsPlayer) return;
 
             Map m = pawn.Map; if (m == null) m = t.Map;
-            if (t.HasThing && !MainMod.UseUnsafePatches)
+            if (t.HasThing)
             {
                 __result += MainMod.save.TryGetThingPriority(t.Thing, out int pri) ? pri + 0.1f : 0;
             }
@@ -159,5 +159,16 @@ namespace Prioritize
         }
     }
 
+    [HarmonyPatch(typeof(Designation), "Notify_Removing")]
+    public class Patch_RemoveDesignation
+    {
+        public static void Prefix(Designation __instance)
+        {
+            if (__instance.target.HasThing)
+            {
+                MainMod.save.SetThingPriority(__instance.target.Thing, 0);
+            }
+        }
+    }
     #endregion
 }

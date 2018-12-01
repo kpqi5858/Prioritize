@@ -15,8 +15,8 @@ namespace Prioritize
             soundDragChanged = SoundDefOf.Designate_DragStandard_Changed;
             icon = ContentFinder<Texture2D>.Get("UI/Prioritize/ThingPri", true);
             useMouseIcon = true;
-            defaultLabel = "Thing Priority";
-            defaultDesc = "dev";
+            defaultLabel = "P_DesignatorThingLabel".Translate();
+            defaultDesc = "P_DesignatorThingDesc".Translate();
             soundSucceeded = SoundDefOf.Designate_Mine;
             
         }
@@ -24,12 +24,12 @@ namespace Prioritize
         {
             get
             {
-                yield return new FloatMenuOption("Priority", delegate ()
+                yield return new FloatMenuOption("Priority".Translate(), delegate ()
                 {
                     Find.WindowStack.Add(new Dialog_SelectPriority());
                 }, MenuOptionPriority.Default, null, null, 0f, null, null);
 
-                yield return new FloatMenuOption("Show Options", delegate ()
+                yield return new FloatMenuOption("Options".Translate(), delegate ()
                 {
                     PriorityShowConditions.ShowConditionsMenuBox();
                 }, MenuOptionPriority.High);

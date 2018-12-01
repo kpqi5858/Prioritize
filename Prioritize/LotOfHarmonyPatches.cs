@@ -6,6 +6,7 @@ using RimWorld;
 using Verse;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using UnityEngine;
 
 namespace Prioritize
 {
@@ -170,5 +171,27 @@ namespace Prioritize
             }
         }
     }
+
+    [StaticConstructorOnStartup]
+    [HarmonyPatch(typeof(PlaySettings), "DoPlaySettingsGlobalControls")]
+    public class Patch_PlaySettingsControls
+    {
+        public static readonly Texture2D ShowPriority = ContentFinder<Texture2D>.Get("UI/Prioritize/ShowPriority");
+        public static void Postfix(WidgetRow row, bool worldView)
+        {
+            if (!worldView)
+            {
+                if (row.ButtonIcon(ShowPriority, "P_ShowPriority".Translate()))
+                {
+                    var listOptions = new List<FloatMenuOption>();
+                    listOptions.Add(new FloatMenuOption("None".Translate(), delegate () { MainMod.ForcedDrawMode = PriorityDrawMode.None; }));
+                    listOptions.Add(new FloatMenuOption("P_Cell".Translate(), delegate () { MainMod.ForcedDrawMode = PriorityDrawMode.Cell; }));
+                    listOptions.Add(new FloatMenuOption("P_Thing".Translate(), delegate () { MainMod.ForcedDrawMode = PriorityDrawMode.Thing; }));
+                    Find.WindowStack.Add(new FloatMenu(listOptions));
+                }
+            }
+        }
+    }
     #endregion
+
 }

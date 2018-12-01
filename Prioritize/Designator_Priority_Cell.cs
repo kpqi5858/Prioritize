@@ -8,8 +8,8 @@ namespace Prioritize
     {
         public Designator_Priority_Cell() : base()
         {
-            defaultLabel = "Cell Priority";
-            defaultDesc = "dev";
+            defaultLabel = "P_DesignatorCellLabel".Translate();
+            defaultDesc = "P_DesignatorCellDesc".Translate();
             icon = ContentFinder<Texture2D>.Get("UI/Prioritize/CellPri", true);
         }
         public override bool DragDrawMeasurements => true;

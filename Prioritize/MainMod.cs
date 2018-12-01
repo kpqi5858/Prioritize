@@ -27,12 +27,15 @@ namespace Prioritize
 
         public static PriorityDrawMode PriorityDraw = PriorityDrawMode.None;
 
+        public static PriorityDrawMode ForcedDrawMode = PriorityDrawMode.None;
+
+
         public static HashSet<int> DestroyedThingId = new HashSet<int>();
 
         public override void DefsLoaded()
         {
             base.DefsLoaded();
-            Settings.GetHandle<bool>("P_UseUnsafePatches", "Use unsafe patches", "This may cause some bugs, but it works better", false);
+            Settings.GetHandle<bool>("P_UseUnsafePatches", "P_UseUnsafePatchesTitle".Translate(), "P_UseUnsafePatchesDesc".Translate(), false);
 
         }
         public override void WorldLoaded()
@@ -77,35 +80,37 @@ namespace Prioritize
             //Logger.Message(Find.DesignatorManager.SelectedDesignator.GetType().ToString());
             if (Find.DesignatorManager.SelectedDesignator is Designator_Priority_Cell) PriorityDraw = PriorityDrawMode.Cell;
             else if (Find.DesignatorManager.SelectedDesignator is Designator_Priority_Thing) PriorityDraw = PriorityDrawMode.Thing;
-            else PriorityDraw = PriorityDrawMode.None;
+            else PriorityDraw = ForcedDrawMode;
 
             Map map = Find.CurrentMap;
 
-            AdjustPriorityMouseControl();
-
-            CellRect rect = GetMapRect();
-            if (rect.Area >= 10000) return;
-            foreach (IntVec3 intVec in rect)
+            if (PriorityDraw != PriorityDrawMode.None)
             {
-                if (!intVec.InBounds(map)) continue;
-                if (PriorityDraw == PriorityDrawMode.Cell)
+                AdjustPriorityMouseControl();
+
+                CellRect rect = GetMapRect();
+                if (rect.Area >= 10000) return;
+                foreach (IntVec3 intVec in rect)
                 {
-                    Vector3 v = GenMapUI.LabelDrawPosFor(intVec);
-                    int p = save.GetOrCreatePriorityMapData(map).GetPriorityAt(intVec);
-                    if (p == 0) continue;
-                    DrawThingLabel(v, p.ToString(), GetPriorityDrawColor(true, p));
-                }
-                else if (PriorityDraw == PriorityDrawMode.Thing)
-                {
-                    var th = intVec.GetThingList(map);
-                    for (int j = 0; j < th.Count; j++)
+                    if (!intVec.InBounds(map)) continue;
+                    if (PriorityDraw == PriorityDrawMode.Cell)
                     {
-                        var thing = th[j];
-                        if (ThingShowCond(thing) && save.TryGetThingPriority(thing, out int pri)) DrawThingLabel(GenMapUI.LabelDrawPosFor(thing, 0f), pri.ToString(), GetPriorityDrawColor(false, pri));
+                        Vector3 v = GenMapUI.LabelDrawPosFor(intVec);
+                        int p = save.GetOrCreatePriorityMapData(map).GetPriorityAt(intVec);
+                        if (p == 0) continue;
+                        DrawThingLabel(v, p.ToString(), GetPriorityDrawColor(true, p));
+                    }
+                    else if (PriorityDraw == PriorityDrawMode.Thing)
+                    {
+                        var th = intVec.GetThingList(map);
+                        for (int j = 0; j < th.Count; j++)
+                        {
+                            var thing = th[j];
+                            if (ThingShowCond(thing) && save.TryGetThingPriority(thing, out int pri)) DrawThingLabel(GenMapUI.LabelDrawPosFor(thing, 0f), pri.ToString(), GetPriorityDrawColor(false, pri));
+                        }
                     }
                 }
             }
-
 
         }
 
@@ -121,16 +126,16 @@ namespace Prioritize
             Color ColorUpper = IsCell ? CellColorUpper : ThingColorUpper;
             Color ColorDown  = IsCell ? CellColorDown  : ThingColorDown;
 
-            float ThresholdPri = 10f;
+            float ThresholdPri = 6.25f;
 
             Color res = Color.white;
             if (pri > 0)
             {
-                res = Color.Lerp(Color.white, ColorUpper, pri / ThresholdPri);
+                res = Color.Lerp(res, ColorUpper, pri / ThresholdPri);
             }
             if (pri < 0)
             {
-                res = Color.Lerp(Color.white, ColorDown, -pri / ThresholdPri);
+                res = Color.Lerp(res, ColorDown, -pri / ThresholdPri);
             }
 
             return res;
@@ -160,7 +165,7 @@ namespace Prioritize
             //GUI.DrawTexture(position, TexUI.GrayTextBG);
             GUI.color = textColor;
             Text.Anchor = TextAnchor.UpperCenter;
-            Rect rect = new Rect(screenPos.x - x / 2f, screenPos.y, x, 999f);
+            Rect rect = new Rect(screenPos.x - x / 2f, screenPos.y - 3f, x, 999f);
             Widgets.Label(rect, text);
             GUI.color = Color.white;
             Text.Anchor = TextAnchor.UpperLeft;

@@ -23,7 +23,7 @@ namespace Prioritize
                 var res = t is Blueprint || t is Frame || map.designationManager.DesignationOn(t) != null || map.listerHaulables.ThingsPotentiallyNeedingHauling().Contains(t);
                 if (t.Position.IsValid) res = res || map.designationManager.AllDesignationsAt(t.Position).Count() > 0;
                 return res;
-            }, "Auto");
+            }, "P_Auto".Translate());
             DefaultCondition = defcond;
 
             Conditions.Add(defcond);
@@ -31,37 +31,32 @@ namespace Prioritize
             Conditions.Add(new PriorityShowCondition(delegate (Thing t) 
             {
                 return t is Blueprint || t is Frame;
-            }, "Blueprint"));
+            }, "BlueprintLabelExtra".Translate()));
 
             Conditions.Add(new PriorityShowCondition(delegate (Thing t)
             {
                 return t is Blueprint || t is Frame || t.Map.designationManager.DesignationOn(t) != null;
-            }, "Designations"));
+            }, "P_Designations".Translate()));
 
             Conditions.Add(new PriorityShowCondition(delegate (Thing t)
             {
                 return t is Building || t is Hive;
-            }, "Building"));
+            }, "P_Building".Translate()));
 
             Conditions.Add(new PriorityShowCondition(delegate (Thing t)
             {
                 return t is Pawn;
-            }, "Pawn"));
+            }, "PawnsTabShort".Translate()));
 
             Conditions.Add(new PriorityShowCondition(delegate (Thing t)
             {
                 return t.def.EverHaulable;
-            }, "Items"));
-
-            Conditions.Add(new PriorityShowCondition(delegate (Thing t)
-            {
-                return t is Plant;
-            }, "Plant"));
+            }, "P_Items".Translate()));
 
             Conditions.Add(new PriorityShowCondition(delegate (Thing t)
             {
                 return t is ThingWithComps;
-            }, "All"));
+            }, "ShowAll".Translate()));
             CacheMenuOptions();
         }
 

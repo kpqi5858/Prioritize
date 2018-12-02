@@ -14,16 +14,32 @@ namespace Prioritize
 
         public int GetOrCreateThingPriority(Thing t)
         {
+            if (t == null)
+            {
+                Log.ErrorOnce("GetOrCreateThingPriority called with null Thing.", "P_GOCTP".GetHashCode());
+                return 0;
+            }
             if (ThingPriority.TryGetValue(t.thingIDNumber, out int val)) return val;
             ThingPriority.Add(t.thingIDNumber, 0); return 0;
         }
 
         public bool TryGetThingPriority(Thing t, out int pri)
         {
+            if (t == null)
+            {
+                Log.ErrorOnce("TryGetThingPriority called with null Thing.", "P_TGTP".GetHashCode());
+                pri = 0;
+                return false;
+            }
             return ThingPriority.TryGetValue(t.thingIDNumber, out pri);
         }
         public void SetThingPriority(Thing t, int p)
         {
+            if (t == null)
+            {
+                Log.ErrorOnce("SetThingPriority called with null Thing.", "P_STP".GetHashCode());
+                return;
+            }
             if (ThingPriority.ContainsKey(t.thingIDNumber))
             {
                 if (p == 0)
@@ -38,6 +54,11 @@ namespace Prioritize
         }
         public PriorityMapData GetOrCreatePriorityMapData(Map m)
         {
+            if (m == null)
+            {
+                Log.Error("GetOrCreatePriorityMapData called with null Map.");
+                return null;
+            }
             if (PriorityMapDataDict.TryGetValue(Find.Maps.IndexOf(m), out PriorityMapData grid)) return grid;
             PriorityMapData pg = new PriorityMapData(m);
             PriorityMapDataDict.Add(Find.Maps.IndexOf(m), pg); return pg;

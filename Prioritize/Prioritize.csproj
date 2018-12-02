@@ -54,8 +54,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Designator_PrioritySettings.cs" />
     <Compile Include="Designator_Priority_Cell.cs" />
     <Compile Include="Designator_Priority_Thing.cs" />
+    <Compile Include="Designator_SetPriority.cs" />
     <Compile Include="Dialog_SelectPriority.cs" />
     <Compile Include="MainMod.cs" />
     <Compile Include="LotOfHarmonyPatches.cs" />

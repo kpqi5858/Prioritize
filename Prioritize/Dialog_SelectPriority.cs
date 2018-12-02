@@ -15,15 +15,38 @@ namespace Prioritize
             closeOnClickedOutside = true;
         }
 
-        public override Vector2 InitialSize => new Vector2(140, 100);
+        public override Vector2 InitialSize => new Vector2(300, 110);
+
+        private string editBuffer;
+
         public override void DoWindowContents(Rect inRect)
         {
-            string text = Widgets.TextField(new Rect(0, 15, inRect.width, 35f), MainMod.SelectedPriority.ToString());
-            if (short.TryParse(text, out short res)) MainMod.SelectedPriority = res;
-            else
+            if (Widgets.ButtonText(new Rect(0, 5, 30f, 30), "-1"))
             {
-                text = MainMod.SelectedPriority.ToString();
-                SoundDefOf.ClickReject.PlayOneShotOnCamera();
+                MainMod.SelectedPriority -= (short)GenUI.CurrentAdjustmentMultiplier();
+                editBuffer = ((int)MainMod.SelectedPriority).ToStringCached();
+            }
+            if (Widgets.ButtonText(new Rect(210, 5, 30f, 30), "+1"))
+            {
+                MainMod.SelectedPriority += (short)GenUI.CurrentAdjustmentMultiplier();
+                editBuffer = ((int)MainMod.SelectedPriority).ToStringCached();
+            }
+            int pri = MainMod.SelectedPriority;
+
+            Widgets.TextFieldNumeric<int>(new Rect(45, 5, 150, 30), ref pri, ref editBuffer, -32766, 32768);
+
+            MainMod.SelectedPriority = (short) pri;
+            Rect offset = new Rect(0f, 50f, 20f, 20f);
+            float spacing = 3f + offset.width;
+
+            for (int i = -5; i <= 5; i++)
+            {
+                if (Widgets.ButtonText(offset, i.ToString()))
+                {
+                    MainMod.SelectedPriority = (short) i;
+                    editBuffer = i.ToStringCached();
+                }
+                offset.x += spacing;
             }
         }
     }

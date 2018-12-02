@@ -114,7 +114,7 @@ namespace Prioritize
 
         }
 
-        private static Color GetPriorityDrawColor(bool IsCell, float pri)
+        public static Color GetPriorityDrawColor(bool IsCell, float pri)
         {
             Color CellColorUpper = new Color(0, 0, 1); //Blue
             Color CellColorDown =  new Color(1, 0.5f, 0); //Orange

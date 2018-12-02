@@ -18,7 +18,8 @@ namespace Prioritize
         {
             if (CheckCanInteract())
             {
-                Find.WindowStack.Add(new Dialog_SelectPriority());
+                if (Find.DesignatorManager.SelectedDesignator is Designator_Priority_Cell || Find.DesignatorManager.SelectedDesignator is Designator_Priority_Thing) MainMod.SelectedPriority = 0;
+                else Find.WindowStack.Add(new Dialog_SelectPriority());
             }
         }
 

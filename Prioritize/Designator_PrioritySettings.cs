@@ -18,8 +18,7 @@ namespace Prioritize
         {
             if (CheckCanInteract())
             {
-                if (Find.DesignatorManager.SelectedDesignator is Designator_Priority_Cell || Find.DesignatorManager.SelectedDesignator is Designator_Priority_Thing) MainMod.SelectedPriority = 0;
-                else PriorityShowConditions.ShowConditionsMenuBox();
+                PriorityShowConditions.ShowConditionsMenuBox();
             }
         }
 

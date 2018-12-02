@@ -18,7 +18,6 @@ namespace Prioritize
         {
             var defcond = new PriorityShowCondition(delegate (Thing t)
             {
-                if (t.Faction?.IsPlayer == false) return false;
                 Map map = t.Map;
                 var res = t is Blueprint || t is Frame || map.designationManager.DesignationOn(t) != null || map.listerHaulables.ThingsPotentiallyNeedingHauling().Contains(t);
                 if (t.Position.IsValid) res = res || map.designationManager.AllDesignationsAt(t.Position).Count() > 0;

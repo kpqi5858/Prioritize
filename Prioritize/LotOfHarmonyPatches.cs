@@ -10,6 +10,22 @@ using UnityEngine;
 
 namespace Prioritize
 {
+
+    public static class PriorityUtils
+    {
+        public static float GetPriority(Thing t)
+        {
+            float pr = (MainMod.save.TryGetThingPriority(t, out int pri) ? pri : 0);
+            if (t.Map != null && t.Position.InBounds(t.Map))
+            {
+                pr += MainMod.save.GetOrCreatePriorityMapData(t.Map).GetPriorityAt(t.Position);
+            }
+
+            if (MainMod.UseLowerAsHighPriority.Value) pr = -pr;
+
+            return pr;
+        }
+    }
     #region UnsafePatches
 
     [HarmonyPatch(typeof(GenClosest), "ClosestThing_Global")]
@@ -23,15 +39,7 @@ namespace Prioritize
             {
                 return 0f;
             };
-            priorityGetter = delegate (Thing t)
-            {
-                float pr = p(t) + (MainMod.save.TryGetThingPriority(t, out int pri) ? pri : 0);
-                if (t.Map != null && t.Position.InBounds(t.Map))
-                {
-                    pr += MainMod.save.GetOrCreatePriorityMapData(t.Map).GetPriorityAt(t.Position);
-                }
-                return pr;
-            };
+            priorityGetter = t => PriorityUtils.GetPriority(t) + p(t);
         }
     }
 
@@ -46,15 +54,7 @@ namespace Prioritize
             {
                 return 0f;
             };
-            priorityGetter = delegate (Thing t)
-            {
-                float pr = p(t) + (MainMod.save.TryGetThingPriority(t, out int pri) ? pri : 0);
-                if (t.Map != null && t.Position.InBounds(t.Map))
-                {
-                    pr += MainMod.save.GetOrCreatePriorityMapData(t.Map).GetPriorityAt(t.Position);
-                }
-                return pr;
-            };
+            priorityGetter = t => PriorityUtils.GetPriority(t) + p(t);
         }
     }
 
@@ -69,15 +69,7 @@ namespace Prioritize
             {
                 return 0f;
             };
-            priorityGetter = delegate (Thing t)
-            {
-                float pr = p(t) + (MainMod.save.TryGetThingPriority(t, out int pri) ? pri : 0);
-                if (t.Map != null && t.Position.InBounds(t.Map))
-                {
-                    pr += MainMod.save.GetOrCreatePriorityMapData(t.Map).GetPriorityAt(t.Position);
-                }
-                return pr;
-            };
+            priorityGetter = t => PriorityUtils.GetPriority(t) + p(t);
         }
     }
     #endregion
@@ -105,12 +97,23 @@ namespace Prioritize
             if (pawn.Faction != null && !pawn.Faction.IsPlayer) return;
 
             Map m = pawn.Map; if (m == null) m = t.Map;
+
+            float priority = 0f;
+
             if (t.HasThing)
             {
-                __result += MainMod.save.TryGetThingPriority(t.Thing, out int pri) ? pri + 0.1f : 0;
+                priority += MainMod.save.TryGetThingPriority(t.Thing, out int pri) ? pri + 0.1f : 0;
             }
-            __result += MainMod.save.GetOrCreatePriorityMapData(m).GetPriorityAt(t.Cell);
+            priority += MainMod.save.GetOrCreatePriorityMapData(m).GetPriorityAt(t.Cell);
 
+            if (MainMod.UseLowerAsHighPriority.Value)
+            {
+                __result -= priority;
+            }
+            else
+            {
+                __result += priority;
+            }
         }
     }
 
@@ -165,6 +168,8 @@ namespace Prioritize
     {
         public static void Prefix(Designation __instance)
         {
+            if (__instance.target == null) return;
+
             if (__instance.target.HasThing)
             {
                 MainMod.save.SetThingPriority(__instance.target.Thing, 0);

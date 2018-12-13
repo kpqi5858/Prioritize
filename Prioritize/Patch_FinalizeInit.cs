@@ -13,7 +13,7 @@ namespace Prioritize
         {
             if (MainMod.save == null)
             {
-                Log.Message("FinalizeInit called but no mod save loaded, Probably new game start, or bug. (Should be harmless message)");
+                Log.Message("FinalizeInit called but no Prioritize mod save loaded, Probably new game start, or bug. (Should be harmless message)");
                 return;
             }
             MainMod.save.ClearUnusedThingPriority();
@@ -28,6 +28,11 @@ namespace Prioritize
         {
             if (MainMod.save == null) return;
             MainMod.DestroyedThingId.Add(__instance.thingIDNumber);
+            if (MainMod.DestroyedThingId.Count > 50000)
+            {
+                Log.Warning("Too many items in DestroyedThingId.");
+                MainMod.RemoveThingPriorityNow();
+            }
         }
     }
 

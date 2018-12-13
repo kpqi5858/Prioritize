@@ -7,6 +7,7 @@ using UnityEngine;
 using RimWorld.Planet;
 using RimWorld;
 using Verse.Sound;
+using HugsLib.Settings;
 
 namespace Prioritize
 {
@@ -21,7 +22,9 @@ namespace Prioritize
         /// True  -> Patch GenClosest prioritygetter directly
         /// False -> Patch WorkGiver priority
         /// </summary>
-        public static bool UseUnsafePatches = false;
+        public static SettingHandle<bool> UseUnsafePatches = null;
+
+        public static SettingHandle<bool> UseLowerAsHighPriority = null;
 
         public static Func<Thing, bool> ThingShowCond = PriorityShowConditions.DefaultCondition.Cond;
 
@@ -35,8 +38,8 @@ namespace Prioritize
         public override void DefsLoaded()
         {
             base.DefsLoaded();
-            Settings.GetHandle<bool>("P_UseUnsafePatches", "P_UseUnsafePatchesTitle".Translate(), "P_UseUnsafePatchesDesc".Translate(), false);
-
+            UseUnsafePatches = Settings.GetHandle<bool>("P_UseUnsafePatches", "P_UseUnsafePatchesTitle".Translate(), "P_UseUnsafePatchesDesc".Translate(), false);
+            UseLowerAsHighPriority = Settings.GetHandle<bool>("P_UseLowerAsHighPriority", "P_UseLowerAsHighPriorityTitle".Translate(), "P_UseLowerAsHighPriorityDesc".Translate(), false);
         }
         public override void WorldLoaded()
         {
@@ -54,8 +57,12 @@ namespace Prioritize
         public override void Tick(int currentTick)
         {
             base.Tick(currentTick);
+            RemoveThingPriorityNow();
+        }
+
+        public static void RemoveThingPriorityNow()
+        {
             if (save == null) return;
-            if (currentTick % 60 != 0) return;
             foreach (var pair in DestroyedThingId)
             {
                 save.ThingPriority.Remove(pair);
@@ -127,6 +134,7 @@ namespace Prioritize
             Color ColorDown  = IsCell ? CellColorDown  : ThingColorDown;
 
             float ThresholdPri = 6.25f;
+            if (UseLowerAsHighPriority) pri = -pri;
 
             Color res = Color.white;
             if (pri > 0)
